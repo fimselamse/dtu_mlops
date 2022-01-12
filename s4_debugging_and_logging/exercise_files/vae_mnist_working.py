@@ -10,6 +10,8 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 from torchvision.datasets import MNIST
 from torchvision.utils import save_image
+from keras.callbacks import TensorBoard
+import os
 
 # Model Hyperparameters
 dataset_path = 'datasets'
@@ -20,7 +22,7 @@ x_dim  = 784
 hidden_dim = 400
 latent_dim = 20
 lr = 1e-3
-epochs = 5
+epochs = 1
 
 
 # Data loading
@@ -29,7 +31,7 @@ mnist_transform = transforms.Compose([transforms.ToTensor()])
 train_dataset = MNIST(dataset_path, transform=mnist_transform, train=True, download=True)
 test_dataset  = MNIST(dataset_path, transform=mnist_transform, train=False, download=True)
 
-train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
+train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
 test_loader  = DataLoader(dataset=test_dataset,  batch_size=batch_size, shuffle=False)
 
 class Encoder(nn.Module):  
@@ -52,7 +54,7 @@ class Encoder(nn.Module):
         return z, mean, log_var
        
     def reparameterization(self, mean, std,):
-        epsilon = torch.randn_like(std)
+        epsilon = torch.rand_like(std)
         
         z = mean + std*epsilon
         
@@ -101,24 +103,27 @@ optimizer = Adam(model.parameters(), lr=lr)
 
 
 print("Start training VAE...")
+# os.makedirs("log/", exist_ok=True)
+
 model.train()
-for epoch in range(epochs):
-    overall_loss = 0
-    for batch_idx, (x, _) in enumerate(train_loader):
-        x = x.view(batch_size, x_dim)
-        x = x.to(DEVICE)
+with torch.profiler.profile(activities=[torch.profiler.ProfilerActivity.CPU], on_trace_ready=torch.profiler.tensorboard_trace_handler('log/')) as prof:
+    for epoch in range(epochs):
+        overall_loss = 0
+        for batch_idx, (x, _) in enumerate(train_loader):
+            x = x.view(batch_size, x_dim)
+            x = x.to(DEVICE)
 
-        optimizer.zero_grad()
+            optimizer.zero_grad()
 
-        x_hat, mean, log_var = model(x)
-        loss = loss_function(x, x_hat, mean, log_var)
-        
-        overall_loss += loss.item()
-        
-        loss.backward()
-        optimizer.step()
+            x_hat, mean, log_var = model(x)
+            loss = loss_function(x, x_hat, mean, log_var)
+            
+            overall_loss += loss.item()
+            
+            loss.backward()
+            optimizer.step()
     print("\tEpoch", epoch + 1, "complete!", "\tAverage Loss: ", overall_loss / (batch_idx*batch_size))    
-print("Finish!!")
+    print("Finish!!")
 
 # Generate reconstructions
 model.eval()
