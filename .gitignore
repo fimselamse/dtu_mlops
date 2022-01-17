@@ -27,6 +27,8 @@ share/python-wheels/
 *.egg
 MANIFEST
 
+log
+
 #
 data/
 s7_scalable_applications/exercise_files/lfw
