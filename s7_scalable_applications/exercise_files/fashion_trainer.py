@@ -70,7 +70,7 @@ def train_and_test():
     
     # TODO: Transfering model to GPU if available
     model = FashionCNN()
-    model = ...
+    model = nn.DataParallel(model, device_ids=[0, 1])
     
     error = nn.CrossEntropyLoss()
     
@@ -90,7 +90,7 @@ def train_and_test():
     for epoch in range(num_epochs):
         for batch_idx, (images, labels) in enumerate(train_loader):
             # TODO: Transfering images and labels to GPU if available
-            images, labels = ...
+            images, labels = images.to(device), labels.to(device) 
 
             # Forward pass 
             outputs = model(images)
@@ -113,7 +113,7 @@ def train_and_test():
             
                 for images, labels in test_loader:
                     # TODO: Transfering images and labels to GPU if available
-                    images, labels = ...
+                    images, labels = images.to(device), labels.to(device) 
                     labels_list.append(labels)
                 
                     outputs = model(images)

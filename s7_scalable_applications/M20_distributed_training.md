@@ -153,12 +153,27 @@ files `distributed_example.py` and `distributed_example.sh`. You objective is to
 in the script to get this kind of distributed training to work. Try to answer the following questions (HINT: try to Google around):
    
    1. What is the function of the `DDP` wrapper?
+      
+      Answer: Parallelizes the model by splitting the input across the specified devises
 
    2. What is the function of the `DistributedSampler`?
 
+      Answer: Restricts the dataloader to only return a subset of the dataset. Ensures that multiple devices doesn't run on the same data. Without this, we would essentially just run the entire dataset on multiple devices.
+
    3. Why is it necessary to call `dist.barrier()` before passing a batch into the model?
 
+      Answer: It syncronizes processes across different devices, in case one finishes prior to another.
+
    4. What does the different environment variables do in the `.sh` file
+
+      Answer:
+
+      NUM_NODES=1 # number of nodes
+      
+      NUM_GPUS_PER_NODE=4 # how many gpus you want on this node
+      
+      NODE_RANK=0 # which node to use (there is only 1 in this case, so the first one)
+      
 
 2. Try to benchmark the runs using 1 and 2 GPUs
 
