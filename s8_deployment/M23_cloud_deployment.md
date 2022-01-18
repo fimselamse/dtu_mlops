@@ -122,6 +122,19 @@ do you have to manage the server. Everything is magically taken care of behind t
          * If you deployment fails, try to go to the `Logs Explorer` page in `gcp` which can help you identify why.
    
    4. When you have successfully deployed the model, try to make predictions with it.
+
+      functions successfully created
+      ![cloud functions](../figures/cloud_functions.png)
+
+      successfully called using gcloud functions call
+      ![cloud functions](../figures/cloud_function_call.png)
+
+      successfully called in notebook
+      ![cloud functions](../figures/cloud_function_call_notebook.png)
+
+
+
+
       
 7. You can finally try to redo the exercises deploying a Pytorch application. You will essentially
    need to go through the same steps as the sklearn example, including uploading a trained model

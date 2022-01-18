@@ -87,12 +87,16 @@ Additional documentation can be found [here](https://pytorch.org/serve/).
 5. Checkout the `model_store` folder. Has the model archiver correctly created a model (with `.mar` extension)
    inside the folder?
 
+   ![A test image](../figures/mar-file.png)
+
 6. Finally, we are going to deploy our model and use it:
 
    6.1. Start serving your model in one terminal:
         ```
         torchserve --start --ncs --model-store model_store --models my_fancy_model=my_fancy_model.mar
         ```
+
+      ![A test image](../figures/torch-serve-start.png)
        
    6.2. Next, pick a image that you want to do inference on. It can be any image that you want but try to pick
         one that actually contains an object from the set of imagenet classes. I have also provided a image of
@@ -104,6 +108,9 @@ Additional documentation can be found [here](https://pytorch.org/serve/).
         ```
         curl http://127.0.0.1:8080/predictions/my_fancy_model -T my_image.jpg
         ```
+
+      I could not access the model deployed on torchserve for some reason
+      ![A test image](../figures/torch-serve-connection.png)
 
 7. (Optional) One strategy that researchers often resort to when trying to push out a bit of extra performance
    is creating [ensembles](https://en.wikipedia.org/wiki/Ensemble_learning) of models. Before Alexnet, this was often the
